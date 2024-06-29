@@ -1,20 +1,4 @@
-(in-package :cl-user)
-
-(defpackage :binary-parser
-  (:use :cl)
-  (:export
-   :define-binary-class
-   :define-tagged-binary-class
-   :define-binary-type
-   :define-binary-enum
-   :define-binary-literal
-   :read-value
-   :write-value
-   :*in-progress-objects*
-   :current-binary-object
-   :parent-of-type))
-
-(in-package :binary-parser)
+(in-package :parser)
 
 (defmacro with-gensyms ((&rest names) &body body)
   `(let ,(loop for n in names collect `(,n (gensym ,(format nil "~A-" n))))

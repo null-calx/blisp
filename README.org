@@ -1,0 +1,12 @@
+#+TITLE: readelf
+#+AUTHOR: calx
+
+ELF parsing in lisp, based on [[https://gigamonkeys.com/book/][Practical Common Lisp]]'s chapter 24 and 25.
+
+* References
+
+- [[https://gigamonkeys.com/book/]]
+- [[https://gigamonkeys.com/book/practical-parsing-binary-files]]
+- [[https://gigamonkeys.com/book/practical-an-id3-parser]]
+- [[https://www.sco.com/developers/gabi/2000-07-17/contents.html]]
+- [[https://en.wikipedia.org/wiki/Executable_and_Linkable_Format]]

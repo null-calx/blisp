@@ -1,8 +1,3 @@
-(in-package :cl-user)
-
-(defpackage :readelf
-  (:use :cl :binary-parser))
-
 (in-package :readelf)
 
 (defun generate-low-bit-list (bytes endianess)
