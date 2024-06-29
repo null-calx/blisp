@@ -45,6 +45,7 @@
    (write-value 'unsigned-integer out (if (minusp value)
 					  (+ (expt 2 (* 8 bytes)) value)
 					  value)
+		:bytes bytes
 		:endianess endianess)))
 
 (define-binary-type s8 ()  (signed-integer :bytes 1))
@@ -58,6 +59,56 @@
      (code-char code)))
   (:writer (out value)
    (write-value 'u8 out (char-code value))))
+
+(defun current-endianess ()
+  (ecase (ei-data (e-ident (current-binary-object)))
+    (elfdata2lsb :lsb)
+    (elfdata2msb :msb)))
+
+(defun current-bytes ()
+  (ecase (ei-class (e-ident (current-binary-object)))
+    (elfclass32 4)
+    (elfclass64 8)))
+
+(define-binary-type elf-type-addr ()
+  (unsigned-integer
+   :bytes (current-bytes)
+   :endianess (current-endianess)))
+
+(define-binary-type elf-type-off ()
+  (unsigned-integer
+   :bytes (current-bytes)
+   :endianess (current-endianess)))
+
+(define-binary-type elf-type-half ()
+  (unsigned-integer
+   :bytes 2
+   :endianess (current-endianess)))
+
+(define-binary-type elf-type-word ()
+  (unsigned-integer
+   :bytes 4
+   :endianess (current-endianess)))
+
+(define-binary-type elf-type-sword ()
+  (signed-integer
+   :bytes 4
+   :endianess (current-endianess)))
+
+;; we want xword and sxword to fallback to
+;; word and sword, respectively, in case of elf32
+
+(define-binary-type elf-type-xword ()
+  (unsigned-integer
+   :bytes (current-bytes)
+   :endianess (current-endianess)))
+
+(define-binary-type elf-type-sxword ()
+  (igned-integer
+   :bytes (current-bytes)
+   :endianess (current-endianess)))
+
+;; --- ELF specifications --- --------
 
 (define-binary-literal ei-mag0 (uchar) (code-char #x7F))
 (define-binary-literal ei-mag1 (uchar) #\E)
@@ -89,48 +140,6 @@
    (ei-osabi		u8)
    (ei-abiversion	u8)
    (ei-pad		(unsigned-integer :bytes 7))))
-
-(defun current-endianess ()
-  (ecase (ei-data (e-ident (current-binary-object)))
-    (elfdata2lsb :lsb)
-    (elfdata2msb :msb)))
-
-(defun current-bytes ()
-  (ecase (ei-class (e-ident (current-binary-object)))
-    (elfclass32 4)
-    (elfclass64 8)))
-
-(define-binary-type elf-type-addr ()
-  (unsigned-integer
-   :bytes (current-bytes)
-   :endianess (current-endianess)))
-(define-binary-type elf-type-off ()
-  (unsigned-integer
-   :bytes (current-bytes)
-   :endianess (current-endianess)))
-(define-binary-type elf-type-half ()
-  (unsigned-integer
-   :bytes 2
-   :endianess (current-endianess)))
-(define-binary-type elf-type-word ()
-  (unsigned-integer
-   :bytes 4
-   :endianess (current-endianess)))
-(define-binary-type elf-type-sword ()
-  (signed-integer
-   :bytes 4
-   :endianess (current-endianess)))
-
-;; we want xword and sxword to become word and sword
-;; in case of elf32
-(define-binary-type elf-type-xword ()
-  (unsigned-integer
-   :bytes (current-bytes)
-   :endianess (current-endianess)))
-(define-binary-type elf-type-sxword ()
-  (igned-integer
-   :bytes (current-bytes)
-   :endianess (current-endianess)))
 
 (define-binary-enum e-type (elf-type-half)
   (et-none		; no file type
